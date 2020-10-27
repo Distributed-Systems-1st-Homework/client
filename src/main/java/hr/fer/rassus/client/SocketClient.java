@@ -3,17 +3,16 @@ package hr.fer.rassus.client;
 import hr.fer.rassus.client.api.SocketApi;
 import hr.fer.rassus.client.constants.Constants;
 import hr.fer.rassus.client.model.SensorDescription;
-import hr.fer.rassus.client.model.Worker;
+import hr.fer.rassus.client.model.WaitUserWorker;
+import hr.fer.rassus.client.model.SensorWorker;
 import hr.fer.rassus.client.util.RandomString;
 import hr.fer.rassus.client.util.ReadDataFromFile;
-import org.springframework.http.ResponseEntity;
-
+import org.springframework.web.client.HttpStatusCodeException;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -26,7 +25,6 @@ public class SocketClient implements SocketApi {
     // socket which listens for incoming connections
     private ServerSocket serverSocket;
     // socket which gets given the connection of the client by server socket
-    private Socket socket;
     private AtomicInteger activeConnections;
     private ExecutorService executor;
     private AtomicBoolean runningFlag;
@@ -51,7 +49,6 @@ public class SocketClient implements SocketApi {
         try {
             this.serverSocket = new ServerSocket(port, backlog);
             this.serverSocket.setSoTimeout(500);
-            this.runningFlag.set(true);
 
             // load the .csv file
             ReadDataFromFile reading = new ReadDataFromFile();
@@ -65,56 +62,45 @@ public class SocketClient implements SocketApi {
             this.clientUsername = "Client_" + RandomString.generateRandomString(5);
 
             // create instance of REST connection to server
-            clientToServer = new RestTemplateClient("http://localhost:8080");
+            this.clientToServer = new RestTemplateClient("http://localhost:8080");
 
             // register on the server
-            ResponseEntity<String> response = clientToServer.register(new SensorDescription(this.clientUsername,
-                    this.latitude, this.longitude, this.serverSocket.getLocalSocketAddress().toString(), this.port));
+            this.clientToServer.register(new SensorDescription(this.clientUsername, this.latitude, this.longitude,
+                    this.serverSocket.getLocalSocketAddress().toString(), this.port));
 
-        } catch (SocketException e1) {
-            System.err.println("Exception caught when setting server socket timeout: " + e1);
-        } catch (IOException ex) {
-            System.err.println("Exception caught when opening or setting the server socket: " + ex);
+            this.runningFlag.set(true);
+        } catch (HttpStatusCodeException hsce) {
+            System.err.println("Sensor is already registered: " + hsce);
+        } catch (SocketException se) {
+            System.err.println("Exception caught when setting server socket timeout: " + se);
+        } catch (IOException ioe) {
+            System.err.println("Exception caught when opening or setting the server socket: " + ioe);
         }
     }
 
     @Override
     public void loop() {
-        while (runningFlag.get()) {
-            try {
-                // create a new socket, accept and listen for a connection made to this socket
-                Socket clientSocket = serverSocket.accept();
-                // execute a tcp request handler in a new thread
-                Runnable worker = new Worker(clientSocket, runningFlag, activeConnections, clientToServer, clientUsername);
-                this.executor.execute(worker);
-                activeConnections.getAndIncrement();
-            } catch (SocketTimeoutException ste) {
-                // do nothing, check runningFlag
-            } catch (IOException ex) {
-                System.err.println("Exception caught when waiting for a connection: " + ex);
-            }
+        try {
+            // Execute user worker in a separate thread
+            Runnable userWorker = new WaitUserWorker(this.csvFile, this.clientToServer, this.clientUsername);
+            new Thread(userWorker).start();
+
+            // Execute client to client in a separate thread
+            Socket socket = this.serverSocket.accept();
+            Runnable worker = new SensorWorker(this.csvFile, this.clientUsername, this.activeConnections,
+                    this.clientToServer, socket);
+
+            this.executor.execute(worker);
+            this.activeConnections.getAndIncrement();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     public void shutdown() {
-
-    }
-
-    @Override
-    public boolean getRunningFlag() {
-        return false;
-    }
-
-    public File getCsvFile() {
-        return this.csvFile;
-    }
-
-    public RestTemplateClient getClientToServerConnection() {
-        return this.clientToServer;
-    }
-
-    public String getClientUsername() {
-        return this.clientUsername;
+        // Shut down the sensor
+        this.runningFlag.set(false);
+        activeConnections.getAndDecrement();
     }
 }

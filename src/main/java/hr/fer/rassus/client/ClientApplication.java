@@ -10,6 +10,11 @@ public class ClientApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ClientApplication.class, args);
 		START_TIME = System.currentTimeMillis();
+
+		SocketClient socketClient = new SocketClient();
+		socketClient.startup();
+		socketClient.loop();
+		socketClient.shutdown();
 	}
 
 }

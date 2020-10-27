@@ -1,5 +1,7 @@
 package hr.fer.rassus.client.api;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public interface SocketApi {
     // Server startup. Starts all services offered by the server.
     public void startup();
@@ -9,7 +11,4 @@ public interface SocketApi {
     // Server shutdown. Shuts down all services started during
     //startup.
     public void shutdown();
-    // Gets the running flag that indicates server running status.
-    // @return running flag
-    public boolean getRunningFlag();
 }
