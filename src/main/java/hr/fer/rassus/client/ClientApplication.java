@@ -11,10 +11,10 @@ public class ClientApplication {
 		SpringApplication.run(ClientApplication.class, args);
 		START_TIME = System.currentTimeMillis();
 
-		SocketClient socketClient = new SocketClient();
+		int randomPort = (int)(Math.random() * (65000 - 64000) + 64000);
+		SocketClient socketClient = new SocketClient(randomPort);
 		socketClient.startup();
 		socketClient.loop();
-		socketClient.shutdown();
 	}
 
 }

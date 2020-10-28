@@ -8,7 +8,4 @@ public interface SocketApi {
     // Server loops when in running mode. The server must be active
     // to accept client requests.
     public void loop();
-    // Server shutdown. Shuts down all services started during
-    //startup.
-    public void shutdown();
 }

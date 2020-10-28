@@ -18,7 +18,7 @@ public class WaitUserWorker implements Runnable {
     @Override
     public void run() {
         Scanner scanner = new Scanner(System.in);
-        Thread thread = null;
+        Thread thread;
 
         while(true) {
             if(scanner.hasNext() && scanner.equals("USER_START_MEASURE")) {
