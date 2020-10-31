@@ -1,5 +1,7 @@
 package hr.fer.rassus.client.model;
 
+import org.apache.catalina.User;
+
 public class UserAddress {
     private int port;
     private String ipAddress;
@@ -8,6 +10,8 @@ public class UserAddress {
         this.port = port;
         this.ipAddress = ipAddress;
     }
+
+    public UserAddress() {}
 
     public int getPort() {
         return port;

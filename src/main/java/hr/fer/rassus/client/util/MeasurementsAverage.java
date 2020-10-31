@@ -3,70 +3,69 @@ package hr.fer.rassus.client.util;
 import hr.fer.rassus.client.model.SensorMeasurement;
 
 public class MeasurementsAverage {
-    private Float temperature;
-    private Float pressure;
-    private Float humidity;
-    private Float co;
-    private Float no2;
-    private Float so2;
-
     public SensorMeasurement getAverage(SensorMeasurement currentSensor, SensorMeasurement neighbourSensor) {
         SensorMeasurement average = new SensorMeasurement();
 
+        Float temperature;
         if(currentSensor.getTemperature() == null || currentSensor.getTemperature() == 0) {
-            this.temperature = neighbourSensor.getTemperature();
+            temperature = neighbourSensor.getTemperature();
         } else if(neighbourSensor.getTemperature() == null || neighbourSensor.getTemperature() == 0) {
-            this.temperature = currentSensor.getTemperature();
+            temperature = currentSensor.getTemperature();
         } else {
-            this.temperature = (currentSensor.getTemperature() + neighbourSensor.getTemperature()) / 2;
+            temperature = (currentSensor.getTemperature() + neighbourSensor.getTemperature()) / 2;
         }
 
+        Float pressure;
         if(currentSensor.getPressure() == null || currentSensor.getPressure() == 0) {
-            this.temperature = neighbourSensor.getPressure();
+            pressure = neighbourSensor.getPressure();
         } else if(neighbourSensor.getPressure() == null || neighbourSensor.getPressure() == 0) {
-            this.temperature = currentSensor.getPressure();
+            pressure = currentSensor.getPressure();
         } else {
-            this.temperature = (currentSensor.getPressure() + neighbourSensor.getPressure()) / 2;
+            pressure = (currentSensor.getPressure() + neighbourSensor.getPressure()) / 2;
         }
 
+        Float humidity;
         if(currentSensor.getHumidity() == null || currentSensor.getHumidity() == 0) {
-            this.temperature = neighbourSensor.getHumidity();
+            humidity = neighbourSensor.getHumidity();
         } else if(neighbourSensor.getHumidity() == null || neighbourSensor.getHumidity() == 0) {
-            this.temperature = currentSensor.getHumidity();
+            humidity = currentSensor.getHumidity();
         } else {
-            this.temperature = (currentSensor.getHumidity() + neighbourSensor.getHumidity()) / 2;
+            humidity = (currentSensor.getHumidity() + neighbourSensor.getHumidity()) / 2;
         }
 
+        Float co;
         if(currentSensor.getCo() == null || currentSensor.getCo() == 0) {
-            this.temperature = neighbourSensor.getCo();
+            co = neighbourSensor.getCo();
         } else if(neighbourSensor.getCo() == null || neighbourSensor.getCo() == 0) {
-            this.temperature = currentSensor.getCo();
+            co = currentSensor.getCo();
         } else {
-            this.temperature = (currentSensor.getCo() + neighbourSensor.getCo()) / 2;
+            co = (currentSensor.getCo() + neighbourSensor.getCo()) / 2;
         }
 
+        Float no2;
         if(currentSensor.getNo2() == null || currentSensor.getNo2() == 0) {
-            this.temperature = neighbourSensor.getNo2();
+            no2 = neighbourSensor.getNo2();
         } else if(neighbourSensor.getNo2() == null || neighbourSensor.getNo2() == 0) {
-            this.temperature = currentSensor.getNo2();
+            no2 = currentSensor.getNo2();
         } else {
-            this.temperature = (currentSensor.getNo2() + neighbourSensor.getNo2()) / 2;
+            no2 = (currentSensor.getNo2() + neighbourSensor.getNo2()) / 2;
         }
 
+        Float so2;
         if(currentSensor.getSo2() == null || currentSensor.getSo2() == 0) {
-            this.temperature = neighbourSensor.getSo2();
+            so2 = neighbourSensor.getSo2();
         } else if(neighbourSensor.getSo2() == null || neighbourSensor.getSo2() == 0) {
-            this.temperature = currentSensor.getSo2();
+            so2 = currentSensor.getSo2();
         } else {
-            this.temperature = (currentSensor.getSo2() + neighbourSensor.getSo2()) / 2;
+            so2 = (currentSensor.getSo2() + neighbourSensor.getSo2()) / 2;
         }
 
-        average.setTemperature(this.temperature);
-        average.setPressure(this.pressure);
-        average.setHumidity(this.humidity);
-        average.setCo(this.co);
-        average.setNo2(this.no2);
-        average.setSo2(this.so2);
+        average.setTemperature(temperature);
+        average.setPressure(pressure);
+        average.setHumidity(humidity);
+        average.setCo(co);
+        average.setNo2(no2);
+        average.setSo2(so2);
 
         return average;
     }

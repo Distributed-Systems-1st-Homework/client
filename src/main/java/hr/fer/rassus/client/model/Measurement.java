@@ -3,7 +3,7 @@ package hr.fer.rassus.client.model;
 public class Measurement {
     private String username;
     private String parameter;
-    private float averageValue;
+    private Float averageValue;
 
     public Measurement(String username, String parameter, float averageValue) {
         this.username = username;
@@ -29,11 +29,11 @@ public class Measurement {
         this.parameter = parameter;
     }
 
-    public float getAverageValue() {
+    public Float getAverageValue() {
         return averageValue;
     }
 
-    public void setAverageValue(float averageValue) {
+    public void setAverageValue(Float averageValue) {
         this.averageValue = averageValue;
     }
 }

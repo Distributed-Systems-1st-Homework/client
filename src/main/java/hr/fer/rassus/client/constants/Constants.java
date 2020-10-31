@@ -4,7 +4,7 @@ public enum Constants {
     /**
      * Constant FILE_PATH (file path).
      */
-    FILE_PATH("D:\\OneDrive\\FAKS\\4.godina\\RASSUS\\DZ1\\client\\src\\main\\resources\\static\\mjerenja.csv"),
+    FILE_PATH("D:\\OneDrive\\FAKS\\4.godina\\RASSUS\\DZ1\\client\\build\\resources\\main\\static\\mjerenja.csv"),
     /**
      * Constant PARSER_REGEX (regex for parsing file row).
      */
