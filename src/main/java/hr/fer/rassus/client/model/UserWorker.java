@@ -5,6 +5,7 @@ import hr.fer.rassus.client.RestTemplateClient;
 import hr.fer.rassus.client.util.MeasurementsAverage;
 import hr.fer.rassus.client.util.ReadDataFromFile;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -75,9 +76,13 @@ public class UserWorker implements Runnable {
                     field.setAccessible(true);
                     measurement.setAverageValue((Float)field.get(average));
 
-                    this.clientToServer.storeMeasurements(measurement);
-                    ClientApplication.logger.info("Sensor " + this.clientUsername + " sent parameter \"" + field.getName() +
-                            "\": " + (Float)field.get(average) + " to the server");
+                    if(measurement.getAverageValue() != null) {
+                        if(measurement.getAverageValue() != 0.0) {
+                            this.clientToServer.storeMeasurements(measurement);
+                            ClientApplication.logger.info("Sensor " + this.clientUsername + " sent parameter \"" + field.getName() +
+                                    "\": " + (Float)field.get(average) + " to the server");
+                        }
+                    }
                 }
             }
 
@@ -86,8 +91,17 @@ public class UserWorker implements Runnable {
             this.socket.close();
         } catch (IOException e) {
             ClientApplication.logger.info("Neighbour sensor ended socket connection");
+            terminate();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+        } catch (HttpClientErrorException hcee) {
+            if(hcee.getStatusCode().is4xxClientError()) {
+                ClientApplication.logger.error("No other active sensor found");
+                terminate();
+            }
+        } catch (NullPointerException ne) {
+            ClientApplication.logger.error("Sensor \"" + this.clientUsername + "\" could not read or parse file");
+            terminate();
         }
     }
 

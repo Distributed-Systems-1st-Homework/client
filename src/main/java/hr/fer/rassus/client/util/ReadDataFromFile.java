@@ -6,10 +6,11 @@ import hr.fer.rassus.client.model.SensorMeasurement;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.rmi.server.ServerNotActiveException;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static java.lang.Math.toIntExact;
 
 public class ReadDataFromFile {
     private String clientUsername;
@@ -46,15 +47,15 @@ public class ReadDataFromFile {
         long currentTime = System.currentTimeMillis();
         long activeSeconds = currentTime - ClientApplication.START_TIME;
         ClientApplication.logger.info("Sensor " + this.clientUsername + " has been active for " + TimeUnit.MILLISECONDS.toSeconds(
-                activeSeconds) + " seconds");
-        long fileRow = activeSeconds % 100 + 2;
+                toIntExact(activeSeconds)) + " seconds");
+        int fileRow = toIntExact(activeSeconds) % 100 + 1;
+
         ClientApplication.logger.info("Sensor " + this.clientUsername + " has read file row [" + fileRow + "]");
 
         try {
-            String line = Files.readAllLines(measurementsFile.toPath()).get((int)fileRow);
+            String line = Files.readAllLines(measurementsFile.toPath()).get(fileRow);
             return line;
         } catch (IOException e) {
-            ClientApplication.logger.error("Sensor " + this.clientUsername + " could not read a row from file");
             return null;
         }
     }
@@ -62,6 +63,7 @@ public class ReadDataFromFile {
     public File loadCSVFile (String filePath) {
         if(filePath != null) {
             File measurementsFile = new File(filePath);
+            System.out.println(measurementsFile.getAbsolutePath());
             return measurementsFile;
         }
 

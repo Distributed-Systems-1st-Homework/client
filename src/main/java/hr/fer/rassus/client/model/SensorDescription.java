@@ -15,6 +15,17 @@ public class SensorDescription {
         this.port = port;
     }
 
+    @Override
+    public String toString() {
+        return "SensorDescription{" +
+                "username='" + username + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", ipAddress='" + ipAddress + '\'' +
+                ", port=" + port +
+                '}';
+    }
+
     public SensorDescription() {}
 
     public String getUsername() {

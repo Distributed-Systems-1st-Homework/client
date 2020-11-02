@@ -1,13 +1,13 @@
 package hr.fer.rassus.client.request;
 
-public class UsernameDto {
+public class SensorNameDto {
     String username;
 
-    public UsernameDto(String username) {
+    public SensorNameDto(String username) {
         this.username = username;
     }
 
-    public UsernameDto() {}
+    public SensorNameDto() {}
 
     public String getUsername() {
         return username;

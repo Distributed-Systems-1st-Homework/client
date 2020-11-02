@@ -3,6 +3,7 @@ package hr.fer.rassus.client.model;
 import hr.fer.rassus.client.ClientApplication;
 import hr.fer.rassus.client.RestTemplateClient;
 import java.io.*;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class UserListener implements Runnable {
@@ -21,13 +22,17 @@ public class UserListener implements Runnable {
         Scanner scanner = new Scanner(System.in);
         UserWorker userWorker = null;
         while(true) {
-            String input = scanner.nextLine();
-            if(input.equals("START")) {
-                userWorker = new UserWorker(this.csvFile, this.clientToServer, this.clientUsername);
-                new Thread(userWorker).start();
-                ClientApplication.logger.info("Sensor " + this.clientUsername + " started a new user worker thread");
-            } else if(input.equals("STOP")) {
-                userWorker.terminate();
+            try {
+                String input = scanner.nextLine();
+                if(input.equals("START")) {
+                    userWorker = new UserWorker(this.csvFile, this.clientToServer, this.clientUsername);
+                    new Thread(userWorker).start();
+                    ClientApplication.logger.info("Sensor " + this.clientUsername + " started a new user worker thread");
+                } else if(input.equals("STOP")) {
+                    userWorker.terminate();
+                }
+            } catch (NoSuchElementException nsee) {
+                // do nothing
             }
         }
     }

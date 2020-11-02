@@ -9,4 +9,5 @@ public interface RestApi {
     ResponseEntity<String> register(SensorDescription sensorDescription);
     ResponseEntity<UserAddress> findClosestNeighbour(String username);
     ResponseEntity<String> storeMeasurements(Measurement measurement);
+    ResponseEntity<String> shutdown(String sensorName);
 }
